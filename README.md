@@ -38,3 +38,6 @@ Set the Blazor project as the startup project.
 Press F5 (Run with Debugging) or Ctrl + F5 (Run without Debugging).
 
 The app will launch in your default browser.
+
+UserName:admin@sais.com
+Password:Reset!@123

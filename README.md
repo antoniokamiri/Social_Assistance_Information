@@ -1,6 +1,9 @@
 # Social_Assistance_Information
 This is a Blazor WebAssembly (or Server — specify if needed) application designed to connect to a SQL database. Follow the steps below to run the application locally and configure your database connection.
 
+git clone https://github.com/antoniokamiri/Social_Assistance_Information.git
+cd your-repo-name
+
 🚀 Getting Started
 Prerequisites
 Visual Studio 2022 or later

@@ -25,8 +25,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(ur => ur.UserId)
             .IsRequired();
 
-        builder.HasOne(x => x.CreatedByUser).WithMany().HasForeignKey(x => x.CreatedBy);
-        builder.HasOne(x => x.LastModifiedByUser).WithMany().HasForeignKey(x => x.LastModifiedBy);
+        builder.HasOne(x => x.CreatedByUser).WithMany().HasForeignKey(x => x.CreatedBy).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(x => x.LastModifiedByUser).WithMany().HasForeignKey(x => x.LastModifiedBy).OnDelete(DeleteBehavior.NoAction);
     }
 }
 
@@ -35,6 +35,7 @@ public class ApplicationRoleConfiguration : IEntityTypeConfiguration<Application
     public void Configure(EntityTypeBuilder<ApplicationRole> builder)
     {
         builder.HasIndex(x => x.NormalizedName).HasDatabaseName("RoleNameIndex").IsUnique(false);
+
     }
 }
 public class ApplicationRoleClaimConfiguration : IEntityTypeConfiguration<ApplicationRoleClaim>
@@ -44,7 +45,7 @@ public class ApplicationRoleClaimConfiguration : IEntityTypeConfiguration<Applic
         builder.HasOne(d => d.Role)
             .WithMany(p => p.RoleClaims)
             .HasForeignKey(d => d.RoleId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }
 
@@ -55,11 +56,11 @@ public class ApplicationUserRoleConfiguration : IEntityTypeConfiguration<Applica
         builder.HasOne(d => d.Role)
             .WithMany(p => p.UserRoles)
             .HasForeignKey(d => d.RoleId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
         builder.HasOne(d => d.User)
             .WithMany(p => p.UserRoles)
             .HasForeignKey(d => d.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }
 
@@ -70,7 +71,7 @@ public class ApplicationUserClaimConfiguration : IEntityTypeConfiguration<Applic
         builder.HasOne(d => d.User)
             .WithMany(p => p.UserClaims)
             .HasForeignKey(d => d.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }
 
@@ -81,7 +82,7 @@ public class ApplicationUserLoginConfiguration : IEntityTypeConfiguration<Applic
         builder.HasOne(d => d.User)
             .WithMany(p => p.Logins)
             .HasForeignKey(d => d.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }
 
@@ -92,6 +93,6 @@ public class ApplicationUserTokenConfiguration : IEntityTypeConfiguration<Applic
         builder.HasOne(d => d.User)
             .WithMany(p => p.Tokens)
             .HasForeignKey(d => d.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

@@ -10,4 +10,6 @@ public class SubCounty : Entity
     public County? County { get; set; }
 
     public ICollection<Location>? Locations { get; set; }
+    public ICollection<Applicant>? Applicants { get; set; }
+
 }

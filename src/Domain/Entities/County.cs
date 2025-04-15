@@ -7,4 +7,6 @@ public class County : Entity
     public string? CountyName { get; set; }
 
     public ICollection<SubCounty>? SubCounties { get; set; }
+    public ICollection<Applicant>? Applicants { get; set; }
+
 }

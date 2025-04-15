@@ -28,6 +28,8 @@ public class User : IdentityUser
     public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
     public virtual ICollection<ApplicationUserLogin> Logins { get; set; }
     public virtual ICollection<ApplicationUserToken> Tokens { get; set; }
+    public ICollection<Applicant>? Applicants { get; set; }
+
 
 }
 public class ApplicationRole : IdentityRole

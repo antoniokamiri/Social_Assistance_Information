@@ -1,0 +1,41 @@
+﻿@using SAIS.DTOs
+<MudSelect @ref="ddl"
+           T="string"
+           Label="@label"
+           MultiSelection="true"
+           @bind-SelectedValues="_options"
+           SelectAll="true"
+           SelectAllText="Select All"
+           Variant="Variant.Outlined"
+           MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
+    @foreach (var element in elements)
+    {
+        <MudSelectItem T="string" Value="@element.Value">@element.Text</MudSelectItem>
+    }
+</MudSelect>
+
+
+@code {
+    [Parameter] public string label { get; set; }
+    [Parameter] public List<SelectItem> elements { get; set; }
+
+    private MudSelect<string> ddl;
+    public IEnumerable<string> _options = new HashSet<string> { };
+
+    private string GetMultiSelectionText(List<string> selectedValues)
+    {
+        if (selectedValues.Count > 0)
+        {
+            return "Selected";
+        }
+        else
+        {
+            return label;
+        }
+    }
+
+    public void Clear()
+    {
+        ddl.ClearAsync();
+    }
+}

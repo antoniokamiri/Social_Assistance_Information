@@ -1,4 +1,14 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inherits LayoutComponentBase
+
+@* Required *@
+<MudThemeProvider />
+
+@* Needed for dialogs *@
+<MudDialogProvider />
+
+@* Needed for snackbars *@
+<MudSnackbarProvider />
 
 <div class="page">
     <div class="sidebar">
@@ -7,7 +17,12 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <div style="font-size:25px">
+                <SectionOutlet SectionName="page-title"></SectionOutlet>
+            </div>
+            <AuthorizeView>
+                <a href="/logout" >Logout</a>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">

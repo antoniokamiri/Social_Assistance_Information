@@ -10,4 +10,6 @@ public class Location : Entity
     public SubCounty? SubCounty { get; set; }
 
     public ICollection<SubLocation>? SubLocations { get; set; }
+    public ICollection<Applicant>? Applicants { get; set; }
+
 }

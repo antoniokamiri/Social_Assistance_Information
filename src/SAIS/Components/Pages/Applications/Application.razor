@@ -1,0 +1,217 @@
+﻿@page "/application"
+@using SAIS.DTOs
+
+<SectionContent SectionName="page-title">Applicants</SectionContent>
+
+@inject IApplicationService ApplicationService
+@inject ICriteriaService CriteriaService
+@inject IUserService UserService
+<MudPopoverProvider />
+
+@rendermode InteractiveServer
+
+<style>
+    .filter-panel{
+    padding: 0 20px;
+    position: relative;
+    background-color: var(--light-green);
+    width: 100%;
+    }
+
+    .mud-input{
+    background-color: white !important;
+    }
+
+    .mud-elevation-1{
+    box-shadow: none !important;
+    }
+
+    .mud-table-row {
+    cursor: pointer !important;
+    }
+
+    .mud-grid-item {
+    padding-top: .3rem !important;
+    padding-bottom: .3rem;
+    }
+</style>
+
+<div class="filter-panel">
+    <MudGrid>
+        <MudItem>
+            <MudTextField 
+                @bind-Value="Name"
+                Class="pt-2"
+                Variant="Variant.Outlined"
+                Adornment="Adornment.Start"
+                AdornmentIcon="@Icons.Material.Filled.Search"
+                AdornmentColor="Color.Dark"
+            />
+        </MudItem>
+        <MudItem>
+            <MultiSelect @ref="countyDDL" elements="county" label="County">
+            </MultiSelect>
+        </MudItem>
+        <MudItem>
+            <MultiSelect @ref="subCountyDDL" elements="subCounty" label="Sub County">
+            </MultiSelect>
+        </MudItem>
+        <MudItem>
+            <MultiSelect @ref="locationDDL" elements="location" label="Location">
+            </MultiSelect>
+        </MudItem>
+        <MudItem>
+            <MultiSelect @ref="subLocationDDL" elements="sublocation" label="Sub Location">
+            </MultiSelect>
+        </MudItem>
+        <MudItem>
+            <MultiSelect @ref="villageDDL" elements="village" label="Village">
+            </MultiSelect>
+        </MudItem>
+        <MudItem>
+            <MultiSelect @ref="statusDDL" elements="status" label="Status">
+            </MultiSelect>
+        </MudItem>
+        <MudItem>
+            <MultiSelect @ref="approvedByDDL" elements="approvedBy" label="Approved By">
+            </MultiSelect>
+        </MudItem>
+        <MudItem>
+            <MudDatePicker @bind-Value="DateApplied" Class="pt-2"
+                           Editable="true"
+                           Placeholder="Search by date"
+                           Clearable="true"
+                           DateChanged="OnDateChanged1"
+                           DateFormat="dd.MM.yyyy">
+            </MudDatePicker>
+        </MudItem>
+        <MudItem class="d-flex align-center flex-grow-1 gap-3">
+            <MudButton Variant="Variant.Filled" @onclick="() => dataGrid.ReloadServerData()" Color="Color.Primary">
+                <MudText>Search</MudText>
+            </MudButton>
+            <MudButton Variant="Variant.Filled" @onclick="Reset" Color="Color.Dark">
+                <MudText>Reset</MudText>
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+</div>
+
+<MudDataGrid @ref="dataGrid" T="GetApplicantsResponse" SortMode="SortMode.None" ServerData="ServerReload" Filterable="false">
+    <Columns>
+        <PropertyColumn Property="x => x.ApplicantIdView" Title="Code" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Status" />
+        <PropertyColumn Property="x => x.Gender" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.MaritalStatus" Title="Marital" />
+        <PropertyColumn Property="x => x.IDOrPassportNumber" Title="ID. No." />
+        <PropertyColumn Property="x => x.County" />
+        <PropertyColumn Property="x => x.SubCounty" />
+        <PropertyColumn Property="x => x.Location" />
+        <PropertyColumn Property="x => x.SubLocation" />
+        <PropertyColumn Property="x => x.Village" />
+        <PropertyColumn Property="x => x.User" Title="Approved By" />
+        <PropertyColumn Property="x => x.ApplicationDate" Title="Date" Format="dd MMM yyyy" />
+
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="GetApplicantsResponse" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    MudDataGrid<GetApplicantsResponse> dataGrid;
+    MultiSelect countyDDL;
+    MultiSelect subCountyDDL;
+    MultiSelect locationDDL;
+    MultiSelect subLocationDDL;
+    MultiSelect villageDDL;
+    MultiSelect statusDDL;
+    MultiSelect approvedByDDL;
+
+    public string Name { get; set; }
+    public DateTime? DateApplied { get; set; }
+
+    public List<SelectItem> county;
+    public List<SelectItem> subCounty;
+    public List<SelectItem> location;
+    public List<SelectItem> sublocation;
+    public List<SelectItem> village;
+    public List<SelectItem> status;
+    public List<SelectItem> approvedBy;
+
+    protected override Task OnInitializedAsync()
+    {
+        InitializeDropDown();
+        return Task.CompletedTask;
+    }
+
+
+    private void InitializeDropDown()
+    {
+        county = CriteriaService.GetCounties().Select(x => new SelectItem { Value = x.Id.ToString(), Text = x.CountyName! }).ToList();
+        subCounty = CriteriaService.GetSubCounties().Select(x => new SelectItem { Value = x.Id.ToString(), Text = x.SubCountyName! }).ToList();
+        location = CriteriaService.GetLocations().Select(x => new SelectItem { Value = x.Id.ToString(), Text = x.LocationName! }).ToList();
+        sublocation = CriteriaService.GetSubLocations().Select(x => new SelectItem { Value = x.Id.ToString(), Text = x.SubLocationName! }).ToList();
+        village = CriteriaService.GetVillages().Select(x => new SelectItem { Value = x.Id.ToString(), Text = x.VillageName! }).ToList();
+        status = CriteriaService.GetStatus().Select(x => new SelectItem { Value = x, Text = x }).ToList();
+        approvedBy = UserService.GetUsers().Select(x => new SelectItem { Value = x.Id!, Text = x.Names! }).ToList();
+
+    }
+
+    private async Task<GridData<GetApplicantsResponse>> ServerReload(GridState<GetApplicantsResponse> state)
+    {
+        IEnumerable<GetApplicantsResponse> getApplicant = ApplicationService.GetApplications(new GetApplicantsRequest(){
+            Name = Name,
+            ApplicationDate = DateApplied,
+            CountyId = countyDDL._options.Select(x => int.Parse(x)).ToArray(),
+            SubCountyId = subCountyDDL._options.Select(x => int.Parse(x)).ToArray(),
+            LocationId = locationDDL._options.Select(x => int.Parse(x)).ToArray(),
+            SubLocationId = subLocationDDL._options.Select(x => int.Parse(x)).ToArray(),
+            VillageId = villageDDL._options.Select(x => int.Parse(x)).ToArray(),
+            Status = statusDDL._options.ToArray(),
+            ApprovedBy = approvedByDDL._options.Select(x => x).ToArray(),
+        });
+
+        // state.PageSize = state.PageSize == 10 ? 2 : state.PageSize;
+
+        await Task.Delay(300);
+
+        var totalItems = getApplicant.Count();
+
+        var pagedData = getApplicant.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new GridData<GetApplicantsResponse>
+        {
+            TotalItems = totalItems,
+            Items = pagedData
+        };
+    }
+
+    private Task Reset()
+    {
+        countyDDL.Clear();
+        subCountyDDL.Clear();
+        locationDDL.Clear();
+        subLocationDDL.Clear();
+        villageDDL.Clear();
+        statusDDL.Clear();
+        approvedByDDL.Clear();
+        Name = string.Empty;
+        DateApplied = null;
+
+        return dataGrid.ReloadServerData();
+
+    }
+    private async Task OnDateChanged1(DateTime? date)
+    {
+        if (date.HasValue)
+        {
+            var _date = date.Value.Date;
+            DateApplied = _date.Date;
+        }
+        if (!date.HasValue)
+        {
+            DateApplied = null;
+        }
+    }
+}

@@ -10,4 +10,6 @@ public class SubLocation : Entity
     public Location? Location { get; set; }
 
     public ICollection<Village>? Villages { get; set; }
+    public ICollection<Applicant>? Applicants { get; set; }
+
 }

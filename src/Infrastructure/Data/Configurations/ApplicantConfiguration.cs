@@ -27,8 +27,32 @@ public class ApplicantConfiguration : IEntityTypeConfiguration<Applicant>
             .WithMany(m => m.Applicants)
             .HasForeignKey(a => a.MaritalStatusId);
 
+        builder.HasOne(a => a.County)
+            .WithMany(v => v.Applicants)
+            .HasForeignKey(a => a.CountyId);
+
+        builder.HasOne(a => a.SubCounty)
+            .WithMany(v => v.Applicants)
+            .HasForeignKey(a => a.SubCountyId);
+
+        builder.HasOne(a => a.Location)
+            .WithMany(v => v.Applicants)
+            .HasForeignKey(a => a.LocationId);
+
+        builder.HasOne(a => a.SubLocation)
+            .WithMany(v => v.Applicants)
+            .HasForeignKey(a => a.SubLocationId);
+
         builder.HasOne(a => a.Village)
             .WithMany(v => v.Applicants)
             .HasForeignKey(a => a.VillageId);
+
+        builder.HasOne(a => a.User)
+            .WithMany(v => v.Applicants)
+            .HasForeignKey(a => a.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasMany(t => t.ProgramsAppliedFor).WithMany(x => x.Applicants).UsingEntity<ApplicantProgram>(x => x.HasOne(y => y.AssistanceProgram).WithMany().HasForeignKey(x => x.AssistanceProgramId).OnDelete(DeleteBehavior.NoAction),
+        x => x.HasOne(y => y.Applicant).WithMany().HasForeignKey(x => x.ApplicantId).OnDelete(DeleteBehavior.NoAction));
     }
 }

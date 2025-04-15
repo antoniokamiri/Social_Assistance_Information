@@ -24,6 +24,8 @@ Edit
 "ConnectionStrings": {
   "DefaultConnection": "Server=localhost;Database=YourDbName;Trusted_Connection=True;MultipleActiveResultSets=true"
 }
+
+
 ✅ Make sure the database exists or update the connection string to match your setup.
 
 ▶️ Running the App

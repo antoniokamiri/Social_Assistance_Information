@@ -29,7 +29,7 @@ Edit
 }
 
 
-✅ Make sure the database exists or update the connection string to match your setup.
+✅ Make sure the you update the connection string to match your setup.
 
 ▶️ Running the App
 You can run the app directly from Visual Studio:

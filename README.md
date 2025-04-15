@@ -5,7 +5,7 @@ This is a Blazor WebAssembly (or Server — specify if needed) application desig
 Prerequisites
 Visual Studio 2022 or later
 
-.NET 6/7/8 SDK (depending on your project)
+.NET 9 SDK (depending on your project)
 
 SQL Server or any local SQL database instance
 

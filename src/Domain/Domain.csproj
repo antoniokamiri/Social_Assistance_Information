@@ -7,10 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTO\" />
-    <Folder Include="Entities\" />
+    <Folder Include="DTO\Response\" />
+    <Folder Include="DTO\Request\" />
     <Folder Include="Interface\" />
     <Folder Include="IRepository\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.4" />
   </ItemGroup>
 
 </Project>

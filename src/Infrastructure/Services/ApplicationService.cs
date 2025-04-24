@@ -81,7 +81,7 @@ public class ApplicationService(IUnitOfWork unitOfWork, IHttpContextAccessor con
             TelephoneContact = x.TelephoneContact,
             UserId = x.UserId,
             User = x.User?.DisplayName,
-        }).ToList();
+        }).OrderByDescending(i => i.Id).ToList();
     }
     // Register application
     public async Task<BaseResponse> RegisterApplication(RegisterApplicantsRequest request)

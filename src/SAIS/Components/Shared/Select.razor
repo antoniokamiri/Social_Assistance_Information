@@ -1,0 +1,23 @@
+﻿@using SAIS.DTOs
+<MudSelect T="string"
+@bind-Value="selectedValue"
+Variant="Variant.Outlined"
+Placeholder="@label"
+Label="@label"
+Disabled="@Disabled"
+Clearable="true"
+>
+@* For="ForSelected" *@
+    @foreach (var item in elements)
+    {
+        <MudSelectItem Value="@item.Value">@item.Text</MudSelectItem>
+    }
+</MudSelect>
+
+@code {
+    [Parameter] public string label { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public List<SelectItem> elements { get; set; }
+
+    public string? selectedValue;
+}

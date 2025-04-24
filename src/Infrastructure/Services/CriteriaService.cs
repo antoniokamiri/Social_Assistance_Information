@@ -38,4 +38,22 @@ public class CriteriaService(IUnitOfWork unitOfWork) : ICriteriaService
     {
         return ["NEW", "APPROVED", "REJECTED"];
     }
+
+    public List<MaritalStatus> GetMaritalStatus()
+    {
+        return _unitOfWork.Repository<MaritalStatus>().GetAll();
+
+    }
+
+    public List<Sex> GetGenders()
+    {
+        return _unitOfWork.Repository<Sex>().GetAll();
+
+    }
+
+    public List<AssistanceProgram> GetAssistanceProgram()
+    {
+        return _unitOfWork.Repository<AssistanceProgram>().GetAll();
+
+    }
 }

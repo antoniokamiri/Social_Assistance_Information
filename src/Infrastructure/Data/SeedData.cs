@@ -4,10 +4,8 @@ using Infrastructure.PermissionSet;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Security.Claims;
-using static Infrastructure.PermissionSet.Permissions;
 
 namespace Infrastructure.Data;
 public class SeedData
@@ -357,7 +355,7 @@ public class SeedData
             {
                 new Applicant
                 {
-                    ApplicationDate = DateTime.Now,
+                    ApplicationDate = new DateTime(2025,04,24),
                     FirstName = "Antony",
                     MiddleName = "Maina",
                     LastName = "Mwangi",
@@ -377,7 +375,7 @@ public class SeedData
                 },
                 new Applicant
                 {
-                    ApplicationDate = DateTime.Now,
+                    ApplicationDate = new DateTime(2025,04,24),
                     FirstName = "Aprelle",
                     LastName = "Mwangi",
                     Status = "APPROVED",
@@ -397,7 +395,7 @@ public class SeedData
                 },
                 new Applicant
                 {
-                    ApplicationDate = DateTime.Now,
+                    ApplicationDate = new DateTime(2025,04,24),
                     FirstName = "Rachael",
                     LastName = "Maina",
                     Status = "REJECTED",

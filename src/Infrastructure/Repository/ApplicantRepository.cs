@@ -3,66 +3,30 @@ using Domain.Entities;
 using Domain.IRepository;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace Infrastructure.Repository;
 
 public class ApplicantRepository(AppDBContext dbContext) : GenericRepository<Applicant>(dbContext), IApplicantRepository
 {
-    public async Task<bool> AddApplications(Applicant request)
+    public async Task<bool> AddApplicantPrograms(ApplicantProgram request)
     {
         try
         {
-            var application = _dbContext.Applicants.Add(request);
-
-
-            foreach (var item in request.ProgramsAppliedFor!)
-            {
-                var attachProgram = new ApplicantProgram() { ApplicantId = request.Id, Applicant = request, AssistanceProgramId = item.Id };
-                _dbContext.ApplicantPrograms.Add(attachProgram);
-            }
-
+            var attachProgram = new ApplicantProgram() { ApplicantId = request.ApplicantId, AssistanceProgramId = request.AssistanceProgramId };
+            _dbContext.ApplicantPrograms.Add(attachProgram);
             await _dbContext.SaveChangesAsync();
-
             return true;
+
         }
         catch (Exception)
         {
-
             return false;
         }
-
     }
-
-    public async Task<bool> UpdateApplications(Applicant request)
+    public List<ApplicantProgram> GetApplicantPrograms(int applicantId)
     {
-        try
-        {
-            var application = _dbContext.Applicants.Add(request);
-            await _dbContext.SaveChangesAsync();
-
-            var program = await _dbContext.ApplicantPrograms.Where(a => a.ApplicantId == request.Id).ToListAsync();
-
-            foreach (var item in request.ProgramsAppliedFor!)
-            {
-                if (!program.Any(p => p.AssistanceProgramId == item.Id))
-                {
-                    var attachProgram = new ApplicantProgram() { ApplicantId = request.Id, AssistanceProgramId = item.Id };
-                    _dbContext.ApplicantPrograms.Add(attachProgram);
-                }
-            }
-
-            await _dbContext.SaveChangesAsync();
-            return true;
-        }
-        catch (Exception)
-        {
-
-            return false;
-        }
-
+        return _dbContext.ApplicantPrograms.Where(a => a.ApplicantId == applicantId).ToList();
     }
-
     public List<Applicant> GetApplications(GetApplicantsRequest request)
     {
         IQueryable<Applicant> query = _dbContext.Set<Applicant>()
@@ -73,7 +37,8 @@ public class ApplicantRepository(AppDBContext dbContext) : GenericRepository<App
                     .Include(x => x.SubCounty)
                     .Include(x => x.Location)
                     .Include(x => x.SubLocation)
-                    .Include(x => x.Village);
+                    .Include(x => x.Village)
+                    .Include(x => x.ProgramsAppliedFor);
 
         if (request is null) return [.. query];
 
@@ -120,5 +85,30 @@ public class ApplicantRepository(AppDBContext dbContext) : GenericRepository<App
         }
 
         return [.. query.OrderByDescending(x => x.ApplicationDate)];
+    }
+
+    public Applicant? GetApplicationById(int id)
+    {
+        return _dbContext.Applicants.Where(i => i.Id == id)
+                    .Include(x => x.Sex)
+                    .Include(x => x.User)
+                    .Include(x => x.MaritalStatus)
+                    .Include(x => x.County)
+                    .Include(x => x.SubCounty)
+                    .Include(x => x.Location)
+                    .Include(x => x.SubLocation)
+                    .Include(x => x.Village)
+                    .Include(x => x.ProgramsAppliedFor)
+                    .FirstOrDefault();
+    }
+
+    public async Task<bool> DeleteApplicantPrograms(int applicantId)
+    {
+        var programs = await _dbContext.ApplicantPrograms.Where(a => a.ApplicantId == applicantId).ToListAsync();
+
+        _dbContext.ApplicantPrograms.RemoveRange(programs);
+        await _dbContext.SaveChangesAsync();
+
+        return true;
     }
 }

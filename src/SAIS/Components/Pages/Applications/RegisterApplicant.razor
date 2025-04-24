@@ -1,0 +1,217 @@
+﻿@page "/application/registration"
+@using Domain.Entities
+@using SAIS.DTOs
+@using SAIS.Extensions
+@using SAIS.Extensions.Helpers
+
+@rendermode InteractiveServer
+<MudPopoverProvider />
+
+<style>
+    .head-panel {
+        background-color: var(--light-green);
+        padding: 10px;
+        margin-top: -1.1rem;
+    }
+
+    .discussion-panel {
+        max-height: 60vh;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .application-info {
+        padding: 20px;
+    }
+
+    .action-panel {
+        border-top: 1px solid var(--dark);
+        padding: 20px;
+        background-color: #f9f9f9;
+    }
+</style>
+
+<div class="head-panel d-flex justify-content-between align-items-center">
+    <MudButton StartIcon="@Icons.Material.Filled.ArrowBack" @onclick="BackToApplicationList" Variant="Variant.Filled" Color="Color.Primary">
+        <MudText>Back to list</MudText>
+    </MudButton>
+
+    <div>
+        <MudButton Variant="Variant.Filled"
+                   EndIcon="@Icons.Material.Filled.Save"
+                   Color="Color.Primary"
+                   @onclick="Add">
+            Add Applicants
+        </MudButton>
+    </div>
+</div>
+
+<SectionContent SectionName="page-title">New Application</SectionContent>
+
+<!-- First SECTION -->
+<div class="action-panel">
+    <Alert @ref="alert"></Alert>
+
+    @if (errors.Length > 0)
+    {
+        <MudPaper Class="pa-4 mb-2">
+            <MudText Typo="Typo.subtitle2">@($"Error found ({errors.Length})")</MudText>
+            @foreach (var error in errors)
+            {
+                <MudText Color="@Color.Error">@error</MudText>
+            }
+        </MudPaper>
+    }
+
+    <!-- GRID Layout: 3–4 fields per row -->
+    <MudGrid GutterSize="3">
+        <MudItem xs="12" sm="6" md="4">
+            <MudTextField T="string" Text="@Applicants.Name" @bind-Value="@Applicants.Name" Label="Names" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudDatePicker Label="Expected Completion Date"
+                           @bind-Date="expectedCompletionDate"
+                           Variant="Variant.Outlined"
+                           PickerVariant="PickerVariant.Inline"
+                           Elevation="1"
+                           DateFormat="dd/MM/yyyy" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <Select @ref="genderDDL" elements="gender" label="Gender" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudTextField T="int" Text="@Applicants.Age.ToString()" @bind-Value="@Applicants.Age" Label="Age" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudTextField T="string" Text="@Applicants.PhysicalAddress" @bind-Value="@Applicants.PhysicalAddress" Label="Address" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudTextField T="string" Text="@Applicants.IDOrPassportNumber" @bind-Value="@Applicants.IDOrPassportNumber" Label="Identification" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudTextField T="string" Text="@Applicants.PostalAddress" @bind-Value="@Applicants.PostalAddress" Label="Postal" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudTextField T="string" Text="@Applicants.TelephoneContact" @bind-Value="@Applicants.TelephoneContact" Label="Telephone" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <Select @ref="maritalStatusDDL" elements="maritalStatus" label="Marital Status" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <Select @ref="countyDDL" elements="county" label="County" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <Select @ref="subCountyDDL" elements="subCounty" label="Sub County" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <Select @ref="locationDDL" elements="location" label="Location" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <Select @ref="subLocationDDL" elements="sublocation" label="Sub Location" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <Select @ref="villageDDL" elements="village" label="Village" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MultiSelect @ref="assistanceProgramDDL" elements="assistanceProgram" label="Programs" />
+        </MudItem>
+    </MudGrid>
+</div>
+
+
+@code {
+
+    private GetApplicantsResponse Applicants;
+    private DateTime? expectedCompletionDate;
+
+    Select maritalStatusDDL;
+    Select genderDDL;
+    Select countyDDL;
+    Select subCountyDDL;
+    Select locationDDL;
+    Select subLocationDDL;
+    Select villageDDL;
+    MultiSelect assistanceProgramDDL;
+
+
+    public List<SelectItem> maritalStatus;
+    public List<SelectItem> gender;
+    public List<SelectItem> county;
+    public List<SelectItem> subCounty;
+    public List<SelectItem> location;
+    public List<SelectItem> sublocation;
+    public List<SelectItem> village;
+    public List<SelectItem> assistanceProgram;
+
+    private Alert alert;
+    private string[] errors = { };
+
+    protected override Task OnInitializedAsync()
+    {
+        InitializeDropDown();
+        Applicants = new GetApplicantsResponse();
+        expectedCompletionDate = DateTime.Today;
+        return Task.CompletedTask;
+    }
+
+    private void InitializeDropDown()
+    {
+        maritalStatus = CriteriaService.GetMaritalStatus().Select(x => new SelectItem { Value = x.Id.ToString(), Text = x.Status! }).ToList();
+        gender = CriteriaService.GetGenders().Select(x => new SelectItem { Value = x.Id.ToString(), Text = x.Name! }).ToList();
+        county = CriteriaService.GetCounties().Select(x => new SelectItem { Value = x.Id.ToString(), Text = x.CountyName! }).ToList();
+        subCounty = CriteriaService.GetSubCounties().Select(x => new SelectItem { Value = x.Id.ToString(), Text = x.SubCountyName! }).ToList();
+        location = CriteriaService.GetLocations().Select(x => new SelectItem { Value = x.Id.ToString(), Text = x.LocationName! }).ToList();
+        sublocation = CriteriaService.GetSubLocations().Select(x => new SelectItem { Value = x.Id.ToString(), Text = x.SubLocationName! }).ToList();
+        village = CriteriaService.GetVillages().Select(x => new SelectItem { Value = x.Id.ToString(), Text = x.VillageName! }).ToList();
+        assistanceProgram = CriteriaService.GetAssistanceProgram().Select(x => new SelectItem { Value = x.Id.ToString(), Text = x.ProgramName! }).ToList();
+    }
+
+    private void BackToApplicationList()
+    {
+        nav.NavigateTo("/application");
+    }
+
+    private async Task Add()
+    {
+        var applied = new List<AssistanceProgram>();
+        var request = new RegisterApplicantsRequest
+            {
+                Names = Applicants.Name,
+                ApplicationDate = expectedCompletionDate.Value,
+                SexId = genderDDL.selectedValue.ToNullableInterger() ?? 0,
+                Age = Applicants.Age,
+                MaritalStatusId = maritalStatusDDL.selectedValue.ToNullableInterger() ?? 0,
+                IDOrPassportNumber = Applicants.IDOrPassportNumber,
+                CountyId = countyDDL.selectedValue.ToNullableInterger() ?? 0,
+                SubCountyId = subCountyDDL.selectedValue.ToNullableInterger() ?? 0,
+                LocationId = locationDDL.selectedValue.ToNullableInterger() ?? 0,
+                SubLocationId = subCountyDDL.selectedValue.ToNullableInterger() ?? 0,
+                VillageId = villageDDL.selectedValue.ToNullableInterger() ?? 0,
+                PostalAddress = Applicants.PostalAddress,
+                PhysicalAddress = Applicants.PhysicalAddress,
+                TelephoneContact = Applicants.TelephoneContact,
+                ProgramsAppliedFor = assistanceProgramDDL._options.Select(x => int.Parse(x)).ToList()
+         };
+
+        ValidationHelpers validationHelpers = new ValidationHelpers(request);
+        var isValid = validationHelpers.Validate();
+
+        errors = validationHelpers.validationResults.Select(x => x.ErrorMessage).ToArray();
+
+        if (isValid)
+        {
+            var result = await ApplicationService.RegisterApplication(request);
+
+            if (result.Succeeded)
+            {
+                alert.ShowSuccessAlert("Successfully updated applicant!");
+                await Task.Delay(2000);
+                nav.NavigateTo("/application");
+            }
+            else
+            {
+                alert.ShowFailedAlert("Failed: " + result.ErrorMessage);
+            }
+        }
+    }
+}

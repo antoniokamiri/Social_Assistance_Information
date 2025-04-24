@@ -54,5 +54,7 @@ public class ApplicantConfiguration : IEntityTypeConfiguration<Applicant>
 
         builder.HasMany(t => t.ProgramsAppliedFor).WithMany(x => x.Applicants).UsingEntity<ApplicantProgram>(x => x.HasOne(y => y.AssistanceProgram).WithMany().HasForeignKey(x => x.AssistanceProgramId).OnDelete(DeleteBehavior.NoAction),
         x => x.HasOne(y => y.Applicant).WithMany().HasForeignKey(x => x.ApplicantId).OnDelete(DeleteBehavior.NoAction));
+
+
     }
 }

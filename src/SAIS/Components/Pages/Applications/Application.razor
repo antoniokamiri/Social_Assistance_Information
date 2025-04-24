@@ -3,9 +3,7 @@
 
 <SectionContent SectionName="page-title">Applicants</SectionContent>
 
-@inject IApplicationService ApplicationService
-@inject ICriteriaService CriteriaService
-@inject IUserService UserService
+
 <MudPopoverProvider />
 
 @rendermode InteractiveServer
@@ -34,18 +32,24 @@
     padding-top: .3rem !important;
     padding-bottom: .3rem;
     }
+
+    .fixed-chip {
+        width: 100px;
+        text-align: center;
+        justify-content: center;
+    }
 </style>
 
 <div class="filter-panel">
     <MudGrid>
         <MudItem>
             <MudTextField 
-                @bind-Value="Name"
-                Class="pt-2"
-                Variant="Variant.Outlined"
-                Adornment="Adornment.Start"
-                AdornmentIcon="@Icons.Material.Filled.Search"
-                AdornmentColor="Color.Dark"
+            @bind-Value="Name"
+            Class="pt-2"
+            Variant="Variant.Outlined"
+            Adornment="Adornment.Start"
+            AdornmentIcon="@Icons.Material.Filled.Search"
+            AdornmentColor="Color.Dark"
             />
         </MudItem>
         <MudItem>
@@ -78,11 +82,11 @@
         </MudItem>
         <MudItem>
             <MudDatePicker @bind-Value="DateApplied" Class="pt-2"
-                           Editable="true"
-                           Placeholder="Search by date"
-                           Clearable="true"
-                           DateChanged="OnDateChanged1"
-                           DateFormat="dd.MM.yyyy">
+            Editable="true"
+            Placeholder="Search by date"
+            Clearable="true"
+            DateChanged="OnDateChanged1"
+            DateFormat="dd.MM.yyyy">
             </MudDatePicker>
         </MudItem>
         <MudItem class="d-flex align-center flex-grow-1 gap-3">
@@ -92,23 +96,57 @@
             <MudButton Variant="Variant.Filled" @onclick="Reset" Color="Color.Dark">
                 <MudText>Reset</MudText>
             </MudButton>
+            <MudButton Variant="Variant.Filled" @onclick="Registration" Color="Color.Secondary">
+                <MudText>Register</MudText>
+            </MudButton>
         </MudItem>
     </MudGrid>
 </div>
 
-<MudDataGrid @ref="dataGrid" T="GetApplicantsResponse" SortMode="SortMode.None" ServerData="ServerReload" Filterable="false">
+<MudDataGrid 
+@ref="dataGrid" 
+T="GetApplicantsResponse" 
+SortMode="SortMode.None" 
+ServerData="ServerReload"
+RowsPerPage="2"
+Filterable="false" 
+Hover="true"
+RowClick="RowClicked"
+>
     <Columns>
+        <TemplateColumn HeaderStyle="width:60px" Title="Actions" Sortable="false">
+            <CellTemplate>
+                    <MudMenu Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Size="Size.Small"
+                             Dense="true"
+                             EndIcon="@Icons.Material.Filled.KeyboardArrowDown" IconColor="Color.Info" AnchorOrigin="Origin.CenterLeft">
+                        <MudMenuItem OnClick="@(() => RowClicked(context.Item))">Open</MudMenuItem>
+                    </MudMenu>
+            </CellTemplate>
+        </TemplateColumn>
         <PropertyColumn Property="x => x.ApplicantIdView" Title="Code" />
         <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Status" />
+        <PropertyColumn Property="x => x.Status">
+            <CellTemplate>
+                @switch (context.Item.Status)
+                {
+                    case "NEW":
+                        <MudChip Class="fixed-chip" Color="Color.Info" Size="Size.Medium">@context.Item.Status</MudChip>
+                        break;
+                    case "APPROVED":
+                        <MudChip Class="fixed-chip" Color="Color.Success" Size="Size.Medium">@context.Item.Status</MudChip>
+                        break;
+                    case "REJECTED":
+                        <MudChip Color="Color.Error" Size="Size.Medium">@context.Item.Status</MudChip>
+                        break;
+                    default:
+                        <MudChip Class="fixed-chip" Size="Size.Medium">@context.Item.Status</MudChip>
+                        break;
+                }
+            </CellTemplate>
+        </PropertyColumn>
         <PropertyColumn Property="x => x.Gender" />
-        <PropertyColumn Property="x => x.Age" />
         <PropertyColumn Property="x => x.MaritalStatus" Title="Marital" />
         <PropertyColumn Property="x => x.IDOrPassportNumber" Title="ID. No." />
-        <PropertyColumn Property="x => x.County" />
-        <PropertyColumn Property="x => x.SubCounty" />
-        <PropertyColumn Property="x => x.Location" />
-        <PropertyColumn Property="x => x.SubLocation" />
         <PropertyColumn Property="x => x.Village" />
         <PropertyColumn Property="x => x.User" Title="Approved By" />
         <PropertyColumn Property="x => x.ApplicationDate" Title="Date" Format="dd MMM yyyy" />
@@ -213,5 +251,18 @@
         {
             DateApplied = null;
         }
+    }
+
+    private void RowClicked(DataGridRowClickEventArgs<GetApplicantsResponse> args)
+    {
+        nav.NavigateTo($"/application/details/{args.Item.Id}");
+    }
+    private void RowClicked(GetApplicantsResponse item)
+    {
+        nav.NavigateTo($"/application/details/{item.Id}");
+    }
+    private void Registration()
+    {
+        nav.NavigateTo($"/application/registration");
     }
 }

@@ -39,7 +39,7 @@ public class GetApplicantsResponse
     public string? PhysicalAddress { get; set; }
     public string? TelephoneContact { get; set; }
 
-    public ICollection<ApplicantProgram>? ProgramsAppliedFor { get; set; }
+    public List<AssistanceProgram>? ProgramsAppliedFor { get; set; }
 
     public string? UserId { get; set; }
     public string? User { get; set; }

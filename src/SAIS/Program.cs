@@ -50,7 +50,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IApplicantRepository, ApplicantRepository>();
 
 builder.Services.AddMudServices();
-
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -66,6 +66,9 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()

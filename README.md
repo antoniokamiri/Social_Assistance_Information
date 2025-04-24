@@ -1,44 +1,62 @@
-# Social_Assistance_Information
-This is a Blazor WebAssembly (or Server — specify if needed) application designed to connect to a SQL database. Follow the steps below to run the application locally and configure your database connection.
+📋 Overview
+This is a web-based Applicant Registration and Management System built using Blazor, bootstrap and MudBlazor UI Components. The system allows you to:
 
-git clone https://github.com/antoniokamiri/Social_Assistance_Information.git
-cd your-repo-name
+  1. Register new applicants
+  
+  2. Manage application statuses
+  
+  3. View applicant details
+  
+  4. Filter and paginate records
+  
+  5. Use dynamic form controls based on configuration parameters
 
 🚀 Getting Started
-Prerequisites
-Visual Studio 2022 or later
+🔧 Prerequisites
+Before running the solution, make sure you have the following installed:
 
-.NET 9 SDK
+  a) .NET 9 SDK or later
+  
+  b) Visual Studio 2022 or later
+  
+  c) SQL Server or LocalDB (if database is used)
+  
+  d) Git (optional, for cloning the repository)
 
-SQL Server or any local SQL database instance
+🛠️ Setup Instructions
+1. 📥 Clone the Repository
+  bash
+  git clone https://github.com/antoniokamiri/Social_Assistance_Information.git
+  cd Social_Assistance_Information
 
-🔧 Configuration
-Before running the app, you need to configure the connection string to point to your local SQL database.
+2. 🛠️ Open the Solution
+Open the .sln file in Visual Studio
 
-Open the appsettings.json (or appsettings.Development.json) file.
-
-Locate the ConnectionStrings section.
-
-Replace the default connection string with your local SQL database connection. Example:
-
-json
-Copy
-Edit
-"ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Database=YourDbName;Trusted_Connection=True;MultipleActiveResultSets=true"
+3. ⚙️ Configure appsettings.json
+Navigate to the Server or API project and update the connection string:
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=YOUR_SERVER;Database=YOUR_DB;Trusted_Connection=True;MultipleActiveResultSets=true"
+  }
 }
 
+4. 📦 Restore NuGet Packages
+In Visual Studio, go to:
+  - Tools > NuGet Package Manager > Package Manager Console
+Then run:
+  - dotnet restore
 
-✅ Make sure the you update the connection string to match your setup.
+5. 🧱 Apply Database Migrations
+  cd YourProject.Infrastructure
+  dotnet ef database update
 
-▶️ Running the App
-You can run the app directly from Visual Studio:
-
-Open the solution (.sln) file in Visual Studio.
-
-Set the Blazor project as the startup project.
-
-Press F5 (Run with Debugging) or Ctrl + F5 (Run without Debugging).
+6. ▶️ Run the Application
+In Visual Studio:
+  - Set the Server project as the startup project.
+  - Press F5 or click Run
+Then visit:
+📍 https://localhost:5001
+  
 
 The app will launch in your default browser.
 

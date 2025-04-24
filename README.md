@@ -1,4 +1,5 @@
 📋 Overview
+
 This is a web-based Applicant Registration and Management System built using Blazor, bootstrap and MudBlazor UI Components. The system allows you to:
 
   1. Register new applicants
@@ -12,6 +13,7 @@ This is a web-based Applicant Registration and Management System built using Bla
   5. Use dynamic form controls based on configuration parameters
 
 🚀 Getting Started
+
 🔧 Prerequisites
 Before running the solution, make sure you have the following installed:
 
@@ -24,6 +26,7 @@ Before running the solution, make sure you have the following installed:
   d) Git (optional, for cloning the repository)
 
 🛠️ Setup Instructions
+
 1. 📥 Clone the Repository
   bash
   git clone https://github.com/antoniokamiri/Social_Assistance_Information.git
